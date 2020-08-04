@@ -114,17 +114,23 @@ router.post("/:id/comments", (req, res) => {
 
       Data.insertComment(comment)
         .then((commentMade) => {
-          Data.findCommentById(commentMade.id);
-          then((newComment) => {
-            res.status(201).json({ data: newComment });
-          }).catch((err) => {
-            res.status(500).json({ errorMessage: "Comment wasn't made" });
-          });
+          Data.findPostComments(comment.post_id)
+            .then((postComments) => {
+              res.status(201).json({ postComments });
+            })
+            .catch((err) => {
+              res
+                .status(500)
+                .json({
+                  errorMessage:
+                    "There was an error while saving the comment to the database",
+                });
+            });
         })
         .catch((err) => {
           res.status(400).json({
             message: "the post with the specified ID does not exist.",
-            data: comment,
+            data: err,
           });
         });
     }
