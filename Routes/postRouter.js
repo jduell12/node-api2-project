@@ -146,18 +146,22 @@ router.delete("/:id", (req, res) => {
 
   Data.findById(id)
     .then((post) => {
-      Data.remove(id)
-        .then((deleted) => {
-          res.status(201).json({ removed: post });
-        })
-        .catch((err) =>
-          res.status(500).json({ error: "The post could not be removed." })
-        );
+      if (post[0] === undefined) {
+        res
+          .status(404)
+          .json({ error: "The post with the specified ID does not exist." });
+      } else {
+        Data.remove(id)
+          .then((deleted) => {
+            res.status(201).json({ removed: post });
+          })
+          .catch((err) =>
+            res.status(500).json({ error: "The post could not be removed." })
+          );
+      }
     })
     .catch((err) => {
-      res
-        .status(404)
-        .json({ error: "The post with the specified ID does not exist." });
+      res.status(500).json({ error: "The post could not be removed" });
     });
 });
 
