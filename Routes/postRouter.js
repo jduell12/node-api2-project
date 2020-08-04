@@ -119,12 +119,10 @@ router.post("/:id/comments", (req, res) => {
               res.status(201).json({ postComments });
             })
             .catch((err) => {
-              res
-                .status(500)
-                .json({
-                  errorMessage:
-                    "There was an error while saving the comment to the database",
-                });
+              res.status(500).json({
+                errorMessage:
+                  "There was an error while saving the comment to the database",
+              });
             });
         })
         .catch((err) => {
@@ -141,5 +139,29 @@ router.post("/:id/comments", (req, res) => {
     });
   }
 });
+
+//removes the post with the specified id and returns the deleted post object.
+router.delete("/:id", (req, res) => {
+  const { id } = req.params;
+
+  Data.findById(id)
+    .then((post) => {
+      Data.remove(id)
+        .then((deleted) => {
+          res.status(201).json({ removed: post });
+        })
+        .catch((err) =>
+          res.status(500).json({ error: "The post could not be removed." })
+        );
+    })
+    .catch((err) => {
+      res
+        .status(404)
+        .json({ error: "The post with the specified ID does not exist." });
+    });
+});
+
+//updates the post with the specified id using data from the request body. Returns the modified post
+router.put("/:id", (req, res) => {});
 
 module.exports = router;
