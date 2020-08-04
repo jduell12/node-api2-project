@@ -70,4 +70,33 @@ router.get("/:id/comments", (req, res) => {
     );
 });
 
+//creates a post using the information sent inside the request body
+router.post("/", (req, res) => {
+  const post = req.body;
+
+  if (!post.title || !post.contents) {
+    res.status(400).json({
+      errorMessage: "Please provide title and contents for the post.",
+    });
+  } else {
+    Data.insert(post)
+      .then((postMade) => {
+        Data.findById(postMade.id)
+          .then((post) => {
+            res.status(201).json(post);
+          })
+          .catch((err) => {
+            res
+              .status(404)
+              .json({ error: "A post with that ID can't be found" });
+          });
+      })
+      .catch((err) => {
+        res.status(500).json({
+          error: "There was an error while saving the post to the database",
+        });
+      });
+  }
+});
+
 module.exports = router;
