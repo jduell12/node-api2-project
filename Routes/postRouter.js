@@ -166,6 +166,39 @@ router.delete("/:id", (req, res) => {
 });
 
 //updates the post with the specified id using data from the request body. Returns the modified post
-router.put("/:id", (req, res) => {});
+router.put("/:id", (req, res) => {
+  const { id } = req.params;
+  const editPost = req.body;
+
+  if (!editPost.title || !editPost.contents) {
+    res.status(400).json({
+      errorMessage: "Please provide title and contents for the post.",
+    });
+  } else {
+    Data.update(id, editPost)
+      .then((response) => {
+        if (response === 1) {
+          Data.findById(id)
+            .then((post) => {
+              res.status(200).json(post);
+            })
+            .catch((err) =>
+              res.status(404).json({
+                message: "The post with the specified ID does not exist",
+              })
+            );
+        } else {
+          res
+            .status(404)
+            .json({ message: "The post with the specified ID does not exist" });
+        }
+      })
+      .catch((err) => {
+        res
+          .status(500)
+          .json({ error: "The post information could not be modified." });
+      });
+  }
+});
 
 module.exports = router;
