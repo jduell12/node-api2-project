@@ -35,4 +35,39 @@ router.get("/:id", (req, res) => {
     });
 });
 
+//returns an array of all comment objects associated with the post and specified id
+router.get("/:id/comments", (req, res) => {
+  const { id } = req.params;
+
+  Data.findById(id)
+    .then((post) => {
+      if (post[0] === undefined) {
+        res
+          .status(404)
+          .json({ message: "The post with the specified ID does not exist" });
+      } else {
+        Data.findPostComments(id)
+          .then((comment) => {
+            if (comment[0] === undefined) {
+              res
+                .status(200)
+                .json({ message: "This post has no comments yet" });
+            } else {
+              res.status(200).json({ data: comment });
+            }
+          })
+          .catch((err) => {
+            res.status(500).json({
+              error: "The comments information could not be retrieved",
+            });
+          });
+      }
+    })
+    .catch((err) =>
+      res
+        .status(500)
+        .json({ error: "The post with the specified ID does not exist." })
+    );
+});
+
 module.exports = router;
