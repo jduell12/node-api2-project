@@ -4,6 +4,9 @@ import { Switch, Route, useHistory, Link } from "react-router-dom";
 //components
 import Posts from "./components/Posts";
 
+//context
+import { PostContext } from "./context/PostContext";
+
 function App() {
   const history = useHistory();
 
@@ -18,16 +21,22 @@ function App() {
   return (
     <div>
       <Switch>
-        <Route exact path="/posts">
-          <Posts posts={postInfo} comments={comments} />
-        </Route>
-        <Route>
-          <div>
-            <h1>Post Database</h1>
-            <button onClick={() => history.push("/posts")}>Get Posts</button>
-          </div>
-        </Route>
+        <PostContext.Provider
+          value={{ postInfo, setInfo, comments, setComments }}
+        >
+          <Route exact path="/posts">
+            <Posts querykey={"post"} />
+          </Route>
+
+          <Route exact path="/">
+            <div>
+              <h1>Post Database</h1>
+              <button onClick={() => history.push("/posts")}>Get Posts</button>
+            </div>
+          </Route>
+        </PostContext.Provider>
       </Switch>
+
       <Link to="/">Home</Link>
     </div>
   );
