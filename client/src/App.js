@@ -21,8 +21,13 @@ function App() {
         <Route exact path="/posts">
           <Posts posts={postInfo} comments={comments} />
         </Route>
+        <Route>
+          <div>
+            <h1>Post Database</h1>
+            <button onClick={() => history.push("/posts")}>Get Posts</button>
+          </div>
+        </Route>
       </Switch>
-      <button onClick={() => history.push("/posts")}>Get Posts</button>
       <Link to="/">Home</Link>
     </div>
   );
